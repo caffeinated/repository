@@ -1,0 +1,22 @@
+{
+    "name": "caffeinated/repository",
+    "description": "Reusable Laravel repository interface.",
+    "keywords": ["laravel", "caffeinated", "eloquent", "repository"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Shea Lewis",
+            "email": "shea.lewis89@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "illuminate/support": "5.2.*",
+        "illuminate/config": "5.2.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Caffeinated\\Repository\\": "src/"
+        }
+    }
+}

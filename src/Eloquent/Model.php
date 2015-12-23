@@ -18,6 +18,8 @@ class Model extends EloquentModel
      */
     public function __construct(Config $config)
     {
+        parent::__construct();
+        
         $this->config = $config;
     }
 

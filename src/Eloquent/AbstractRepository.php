@@ -69,7 +69,7 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     public function find($id)
     {
-        return $this->newQuery()->find($id);
+        return $this->newQuery()->findOrFail($id);
     }
 
     /**

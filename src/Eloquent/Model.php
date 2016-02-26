@@ -1,7 +1,7 @@
 <?php
 namespace Caffeinated\Repository\Eloquent;
 
-use Illuminate\Config\Repository as Config;
+use Config;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 
 class Model extends EloquentModel

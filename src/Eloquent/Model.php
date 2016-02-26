@@ -7,23 +7,6 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
 class Model extends EloquentModel
 {
     /**
-     * @var Config
-     */
-    protected $config;
-
-    /**
-     * Create a new Model instance.
-     *
-     * @param Config  $config
-     */
-    public function __construct(Config $config)
-    {
-        parent::__construct();
-        
-        $this->config = $config;
-    }
-
-    /**
      * Handle dynamic method calls into the model.
      *
      * @param  string  $method

@@ -3,13 +3,138 @@ namespace Caffeinated\Repository\Contracts;
 
 interface RepositoryInterface
 {
+    /**
+     * Find an entity by its primary key.
+     *
+     * @param  integer  $id
+     * @param  array  $columns
+     * @param  array  $with
+     */
+    public function find($id, $columns = ['*'], $with = []);
+
+    /**
+     * Find the entity by the given attribute.
+     *
+     * @param  string  $attribute
+     * @param  string  $value
+     * @param  array  $columns
+     * @param  array  $with
+     */
+    public function findBy($attribute, $value, $columns = ['*'], $with = []);
+
+    /**
+     * Find all entities.
+     *
+     * @param  array  $columns
+     * @param  array  $with
+     */
+    public function findAll($columns = ['*'], $with = []);
+
+    /**
+     * Find all entities matching where conditions.
+     *
+     * @param  array  $where
+     * @param  array  $columns
+     * @param  array  $with
+     */
+    public function findWhere(array $where, $columns = ['*'], $with = []);
+
+    /**
+     * Find all entities matching whereIn conditions.
+     *
+     * @param  string  $attribute
+     * @param  array  $values
+     * @param  array  $columns
+     * @param  array  $with
+     */
+    public function findWhereIn($attribute, array $values, $columns = ['*'], $with = []);
+
+    /**
+     * Find all entities matching whereNotIn conditions.
+     *
+     * @param  string  $attribute
+     * @param  array  $values
+     * @param  array  $columns
+     * @param  array  $with
+     */
+    public function findWhereNotIn($attribute, array $values, $columns = ['*'], $with = []);
+
+    /**
+     * Find an entity matching the given attributes or create it.
+     *
+     * @param  array  $attributes
+     */
+    public function findOrCreate(array $attributes);
+
+    /**
+     * Create a new entity with the given attributes.
+     *
+     * @param  array  $attributes
+     */
+    public function create(array $attributes = []);
+
+    /**
+     * Update an entity with the given attributes.
+     *
+     * @param  mixed  $id
+     * @param  array  $attributes
+     */
+    public function update($id, array $attributes = []);
+
+    /**
+     * Delete an entity with the given ID.
+     *
+     * @param  mixed  $id
+     * @return array
+     */
     public function delete($id);
-    public function find($id);
-    public function findBySlug($slug);
-    public function getAll($orderBy = array('id', 'asc'));
-    public function getAllPaginated($orderBy = array('id', 'asc'), $perPage = 25);
-    public function store($request);
-    public function update($id, $request);
+
+    /**
+     * Set the relationships that should be eager loaded.
+     *
+     * @param  mixed  $relationships
+     */
     public function with($relationships);
-    public function dropdown($name, $value);
+
+    /**
+     * Add an "order by" clause to the repository instance.
+     *
+     * @param  string  $column
+     * @param  string  $direction
+     */
+    public function orderBy($column, $direction = 'asc');
+
+    /**
+     * Get an array with the values of the given column from entities.
+     *
+     * @param  string  $column
+     * @param  string|null  $key
+     */
+    public function pluck($column, $key = null);
+
+    /**
+     * Paginate the given query for retrieving entities.
+     *
+     * @param  int|null  $perPage
+     * @param  array  $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     */
+    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
+
+    /**
+     * Magic callStatic method to forward static methods to the model.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     */
+    public static function __callStatic($method, $parameters);
+
+    /**
+     * Magic call method to forward methods to the model.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     */
+    public function __call($method, $parameters);
 }

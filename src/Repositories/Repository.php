@@ -2,7 +2,6 @@
 
 namespace Caffeinated\Repositories\Repositories;
 
-use Closure;
 use Caffeinated\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Contracts\Container\Container as App;
 

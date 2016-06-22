@@ -37,7 +37,7 @@ interface RepositoryInterface
      * @param  array  $columns
      * @param  array  $with
      */
-    public function findWhere(array $where, $columns = ['*'], $with = []);
+    public function findWhere($where, $columns = ['*'], $with = []);
 
     /**
      * Find all entities matching whereIn conditions.
@@ -47,7 +47,7 @@ interface RepositoryInterface
      * @param  array  $columns
      * @param  array  $with
      */
-    public function findWhereIn($attribute, array $values, $columns = ['*'], $with = []);
+    public function findWhereIn($attribute, $values, $columns = ['*'], $with = []);
 
     /**
      * Find all entities matching whereNotIn conditions.
@@ -57,29 +57,29 @@ interface RepositoryInterface
      * @param  array  $columns
      * @param  array  $with
      */
-    public function findWhereNotIn($attribute, array $values, $columns = ['*'], $with = []);
+    public function findWhereNotIn($attribute, $values, $columns = ['*'], $with = []);
 
     /**
      * Find an entity matching the given attributes or create it.
      *
      * @param  array  $attributes
      */
-    public function findOrCreate(array $attributes);
+    public function findOrCreate($attributes);
 
     /**
      * Create a new entity with the given attributes.
      *
-     * @param  array  $attributes
+     * @param  mixed  $attributes
      */
-    public function create(array $attributes = []);
+    public function create($attributes);
 
     /**
      * Update an entity with the given attributes.
      *
      * @param  mixed  $id
-     * @param  array  $attributes
+     * @param  mixed  $attributes
      */
-    public function update($id, array $attributes = []);
+    public function update($id, $attributes);
 
     /**
      * Delete an entity with the given ID.

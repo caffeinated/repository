@@ -1,8 +1,8 @@
 <?php
 
-namespace Caffeinated\Repositories\Repositories;
+namespace Caffeinated\Repository\Repositories;
 
-use Caffeinated\Repositories\Contracts\RepositoryInterface;
+use Caffeinated\Repository\Contracts\RepositoryInterface;
 use Illuminate\Contracts\Container\Container as App;
 
 abstract class Repository implements RepositoryInterface

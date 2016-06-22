@@ -2,6 +2,9 @@
 
 namespace Caffeinated\Repository\Repositories;
 
+use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
+
 class EloquentRepository extends Repository
 {
     /**
@@ -47,12 +50,14 @@ class EloquentRepository extends Repository
     /**
      * Find all entities matching where conditions.
      *
-     * @param  array  $where
+     * @param  mixed  $where
      * @param  array  $columns
      * @param  array  $with
      */
-    public function findWhere(array $where, $columns = ['*'], $with = [])
+    public function findWhere($where, $columns = ['*'], $with = [])
     {
+        $where = $this->castRequest($where);
+
         foreach ($where as $attribute => $value) {
             if (is_array($value)) {
                 list($attribute, $condition, $value) = $value;
@@ -74,8 +79,10 @@ class EloquentRepository extends Repository
      * @param  array  $columns
      * @param  array  $with
      */
-    public function findWhereIn($attribute, array $values, $columns = ['*'], $with = [])
+    public function findWhereIn($attribute, $values, $columns = ['*'], $with = [])
     {
+        $values = $this->castRequest($values);
+
         return $this->model->with($with)
             ->whereIn($attribute, $values)
             ->get($columns);
@@ -89,8 +96,10 @@ class EloquentRepository extends Repository
      * @param  array  $columns
      * @param  array  $with
      */
-    public function findWhereNotIn($attribute, array $values, $columns = ['*'], $with = [])
+    public function findWhereNotIn($attribute, $values, $columns = ['*'], $with = [])
     {
+        $values = $this->castRequest($values);
+
         return $this->model->with($with)
             ->whereNotIn($attribute, $values)
             ->get($columns);
@@ -101,8 +110,10 @@ class EloquentRepository extends Repository
      *
      * @param  array  $attributes
      */
-    public function findOrCreate(array $attributes)
+    public function findOrCreate($attributes)
     {
+        $attributes = $this->castRequest($attributes);
+
         if (! is_null($instance = $this->findWhere($attributes)->first())) {
             return $instance;
         }
@@ -115,10 +126,11 @@ class EloquentRepository extends Repository
      *
      * @param  array  $attributes
      */
-    public function create(array $attributes = [])
+    public function create($attributes)
     {
-        $instance = $this->model->newInstance($attributes);
-        $created  = $instance->save();
+        $attributes = $this->castRequest($attributes);
+        $instance   = $this->model->newInstance($attributes);
+        $created    = $instance->save();
 
         return [
             $created,
@@ -132,10 +144,11 @@ class EloquentRepository extends Repository
      * @param  mixed  $id
      * @param  array  $attributes
      */
-    public function update($id, array $attributes = [])
+    public function update($id, $attributes)
     {
-        $updated  = false;
-        $instance = $id instanceof Model ? $id : $this->find($id);
+        $attributes = $this->castRequest($attributes);
+        $updated    = false;
+        $instance   = $id instanceof Model ? $id : $this->find($id);
 
         if ($instance) {
             $updated = $instance->update($attributes);
@@ -190,5 +203,16 @@ class EloquentRepository extends Repository
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
         return $this->model->paginate($perPage, $columns, $pageName, $page);
+    }
+
+    /**
+     * Cast HTTP request object to an array if need be.
+     *
+     * @param  array|Request  $request
+     * @return array
+     */
+    protected function castRequest($request)
+    {
+        return $request instanceof Request ? $request->all() : $request;
     }
 }

@@ -16,8 +16,12 @@ class EloquentRepository extends Repository
      */
     public function find($id, $columns = ['*'], $with = [])
     {
-        return $this->model->with($with)
-            ->find($id, $columns);
+        $cacheKey = $this->generateKey([$id, $columns, $with]);
+
+        return $this->cacheResults(get_called_class(), __FUNCTION__, $cacheKey, function() use ($id, $columns, $with) {
+            return $this->model->with($with)
+                ->find($id, $columns);
+        });
     }
 
     /**
@@ -30,9 +34,13 @@ class EloquentRepository extends Repository
      */
     public function findBy($attribute, $value, $columns = ['*'], $with = [])
     {
-        return $this->model->with($with)
-            ->where($attribute, '=', $value)
-            ->first($columns);
+        $cacheKey = $this->generateKey([$attribute, $value, $columns, $with]);
+
+        return $this->cacheResults(get_called_class(), __FUNCTION__, $cacheKey, function() use ($attribute, $value, $columns, $with) {
+            return $this->model->with($with)
+                ->where($attribute, '=', $value)
+                ->first($columns);
+        });
     }
 
     /**
@@ -43,8 +51,12 @@ class EloquentRepository extends Repository
      */
     public function findAll($columns = ['*'], $with = [])
     {
-        return $this->model->with($with)
-            ->get($columns);
+        $cacheKey = $this->generateKey([$columns, $with]);
+
+        return $this->cacheResults(get_called_class(), __FUNCTION__, $cacheKey, function() use ($columns, $with) {
+            return $this->model->with($with)
+                ->get($columns);
+        });
     }
 
     /**
@@ -56,19 +68,22 @@ class EloquentRepository extends Repository
      */
     public function findWhere($where, $columns = ['*'], $with = [])
     {
-        $where = $this->castRequest($where);
+        $where    = $this->castRequest($where);
+        $cacheKey = $this->generateKey([$where, $columns, $with]);
 
-        foreach ($where as $attribute => $value) {
-            if (is_array($value)) {
-                list($attribute, $condition, $value) = $value;
-                $this->model->where($attribute, $condition, $value);
-            } else {
-                $this->model->where($attribute, '=', $value);
+        return $this->cacheResults(get_called_class(), __FUNCTION__, $cacheKey, function() use ($where, $columns, $with) {
+            foreach ($where as $attribute => $value) {
+                if (is_array($value)) {
+                    list($attribute, $condition, $value) = $value;
+                    $this->model->where($attribute, $condition, $value);
+                } else {
+                    $this->model->where($attribute, '=', $value);
+                }
             }
-        }
 
-        return $this->model->with($with)
-            ->get($columns);
+            return $this->model->with($with)
+                ->get($columns);
+        });
     }
 
     /**
@@ -81,11 +96,14 @@ class EloquentRepository extends Repository
      */
     public function findWhereIn($attribute, $values, $columns = ['*'], $with = [])
     {
-        $values = $this->castRequest($values);
+        $values   = $this->castRequest($values);
+        $cacheKey = $this->generateKey([$attribute, $values, $columns, $with]);
 
-        return $this->model->with($with)
-            ->whereIn($attribute, $values)
-            ->get($columns);
+        return $this->cacheResults(get_called_class(), __FUNCTION__, $cacheKey, function() use ($attribute, $values, $columns, $with) {
+            return $this->model->with($with)
+                ->whereIn($attribute, $values)
+                ->get($columns);
+        });
     }
 
     /**
@@ -98,11 +116,14 @@ class EloquentRepository extends Repository
      */
     public function findWhereNotIn($attribute, $values, $columns = ['*'], $with = [])
     {
-        $values = $this->castRequest($values);
+        $values   = $this->castRequest($values);
+        $cacheKey = $this->generateKey([$attribute, $values, $columns, $with]);
 
-        return $this->model->with($with)
-            ->whereNotIn($attribute, $values)
-            ->get($columns);
+        return $this->cacheResults(get_called_class(), __FUNCTION__, $cacheKey, function() use ($attribute, $values, $columns, $with) {
+            return $this->model->with($with)
+                ->whereNotIn($attribute, $values)
+                ->get($columns);
+        });
     }
 
     /**
@@ -122,6 +143,38 @@ class EloquentRepository extends Repository
     }
 
     /**
+     * Get an array with the values of the given column from entities.
+     *
+     * @param  string  $column
+     * @param  string|null  $key
+     */
+    public function pluck($column, $key = null)
+    {
+        $cacheKey = $this->generateKey([$column, $key]);
+
+        return $this->cacheResults(get_called_class(), __FUNCTION__, $cacheKey, function() use ($column, $key) {
+            return $this->model->pluck($column, $key);
+        });
+    }
+
+    /**
+     * Paginate the given query for retrieving entities.
+     *
+     * @param  int|null  $perPage
+     * @param  array  $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     */
+    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
+    {
+        $cacheKey = $this->generateKey([$perPage, $columns, $pageName, $page]);
+
+        return $this->cacheResults(get_called_class(), __FUNCTION__, $cacheKey, function() use ($perPage, $columns, $pageName, $page) {
+            return $this->model->paginate($perPage, $columns, $pageName, $page);
+        });
+    }
+
+    /**
      * Create a new entity with the given attributes.
      *
      * @param  array  $attributes
@@ -131,6 +184,8 @@ class EloquentRepository extends Repository
         $attributes = $this->castRequest($attributes);
         $instance   = $this->model->newInstance($attributes);
         $created    = $instance->save();
+
+        event(get_called_class().'.entity.created', [$this, $instance]);
 
         return [
             $created,
@@ -152,6 +207,8 @@ class EloquentRepository extends Repository
 
         if ($instance) {
             $updated = $instance->update($attributes);
+
+            event(get_called_class().'.entity.updated', [$this, $instance]);
         }
 
         return [
@@ -173,36 +230,14 @@ class EloquentRepository extends Repository
 
         if ($instance) {
             $deleted = $instance->delete();
+
+            event(get_called_class().'.entity.deleted', [$this, $instance]);
         }
 
         return [
             $deleted,
             $instance
         ];
-    }
-
-    /**
-     * Get an array with the values of the given column from entities.
-     *
-     * @param  string  $column
-     * @param  string|null  $key
-     */
-    public function pluck($column, $key = null)
-    {
-        return $this->model->pluck($column, $key);
-    }
-
-    /**
-     * Paginate the given query for retrieving entities.
-     *
-     * @param  int|null  $perPage
-     * @param  array  $columns
-     * @param  string  $pageName
-     * @param  int|null  $page
-     */
-    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
-    {
-        return $this->model->paginate($perPage, $columns, $pageName, $page);
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 namespace Caffeinated\Repository\Contracts;
 
-interface RepositoryInterface
+interface Repository
 {
     /**
      * Find an entity by its primary key.

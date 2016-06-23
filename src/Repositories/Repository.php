@@ -2,7 +2,8 @@
 
 namespace Caffeinated\Repository\Repositories;
 
-use Caffeinated\Repository\Contracts\RepositoryInterface;
+use Log;
+use Caffeinated\Repository\Contracts\Repository as RepositoryInterface;
 use Illuminate\Contracts\Container\Container as App;
 
 abstract class Repository implements RepositoryInterface
@@ -79,5 +80,60 @@ abstract class Repository implements RepositoryInterface
         $model = $this->model;
 
         return call_user_func_array([$model, $method], $parameters);
+    }
+
+    /**
+     * Generate an unique key for caching results.
+     *
+     * @param  array  $data
+     * @return string
+     */
+    protected function generateKey(array $data = [])
+    {
+        $data[] = $this->model->toSql();
+
+        return md5(json_encode($data));
+    }
+
+    /**
+     * Execute the provided callback and cache the results.
+     *
+     * @param  string  $class
+     * @param  string  $method
+     * @param  string  $key
+     * @param  Closure  $closure
+     * @return mixed
+     */
+    protected function cacheResults($class, $method, $key, $closure)
+    {
+        $key = $class.'@'.$method.'.'.$key;
+        $tag = $class;
+
+        if (method_exists($this->app->make('cache')->getStore(), 'tags')) {
+            Log::info('Caching database queries!', [$class, $method]);
+            return $this->app->make('cache')->tags($tag)->remember($key, 60, $closure);
+        }
+
+        Log::warning('Current cache driver does not support tagging. Not able to cache database queries.');
+
+        return call_user_func($closure);
+    }
+
+    /**
+     * Flush the repository cache results.
+     *
+     * @return $this
+     */
+    public function flushCache()
+    {
+        if (method_exists($this->app->make('cache')->getStore(), 'tags')) {
+            Log::info('Flushing repository cache', [get_called_class()]);
+
+            $this->app->make('cache')->tags(get_called_class())->flush();
+        }
+
+        Log::warning('Current cache driver does not support tagging. Not able to flush cache.');
+
+        return $this;
     }
 }

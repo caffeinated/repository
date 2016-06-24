@@ -107,14 +107,10 @@ abstract class Repository implements RepositoryInterface
     protected function cacheResults($class, $method, $key, $closure)
     {
         $key = $class.'@'.$method.'.'.$key;
-        $tag = $class;
 
         if (method_exists($this->app->make('cache')->getStore(), 'tags')) {
-            Log::info('Caching database queries!', [$class, $method]);
-            return $this->app->make('cache')->tags($tag)->remember($key, 60, $closure);
+            return $this->app->make('cache')->tags($this->tag)->remember($key, 60, $closure);
         }
-
-        Log::warning('Current cache driver does not support tagging. Not able to cache database queries.');
 
         return call_user_func($closure);
     }
@@ -127,12 +123,10 @@ abstract class Repository implements RepositoryInterface
     public function flushCache()
     {
         if (method_exists($this->app->make('cache')->getStore(), 'tags')) {
-            Log::info('Flushing repository cache', [get_called_class()]);
+            $this->app->make('cache')->tags($this->tag)->flush();
 
-            $this->app->make('cache')->tags(get_called_class())->flush();
+            event(implode('-', $this->tag).'.entity.cache.flushed', [$this]);
         }
-
-        Log::warning('Current cache driver does not support tagging. Not able to flush cache.');
 
         return $this;
     }

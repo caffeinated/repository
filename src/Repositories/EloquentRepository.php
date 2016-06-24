@@ -185,7 +185,7 @@ class EloquentRepository extends Repository
         $instance   = $this->model->newInstance($attributes);
         $created    = $instance->save();
 
-        event(get_called_class().'.entity.created', [$this, $instance]);
+        event(implode('-', $this->tag).'.entity.created', [$this, $instance]);
 
         return [
             $created,
@@ -208,7 +208,7 @@ class EloquentRepository extends Repository
         if ($instance) {
             $updated = $instance->update($attributes);
 
-            event(get_called_class().'.entity.updated', [$this, $instance]);
+            event(implode('-', $this->tag).'.entity.updated', [$this, $instance]);
         }
 
         return [
@@ -231,7 +231,7 @@ class EloquentRepository extends Repository
         if ($instance) {
             $deleted = $instance->delete();
 
-            event(get_called_class().'.entity.deleted', [$this, $instance]);
+            event(implode('-', $this->tag).'.entity.deleted', [$this, $instance]);
         }
 
         return [

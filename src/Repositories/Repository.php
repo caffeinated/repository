@@ -2,19 +2,10 @@
 
 namespace Caffeinated\Repository\Repositories;
 
-use Log;
 use Caffeinated\Repository\Contracts\Repository as RepositoryInterface;
-use Illuminate\Contracts\Container\Container as App;
 
 abstract class Repository implements RepositoryInterface
 {
-    /**
-     * Laravel app container instance.
-     *
-     * @var App
-     */
-    protected $app;
-
     /**
      * The repository model class.
      *
@@ -27,10 +18,9 @@ abstract class Repository implements RepositoryInterface
      *
      * @param  App  $app
      */
-    public function __construct(App $app)
+    public function __construct()
     {
-        $this->app   = $app;
-        $this->model = $this->app->make($this->model);
+        $this->model = app()->make($this->model);
     }
 
     /**
@@ -108,8 +98,8 @@ abstract class Repository implements RepositoryInterface
     {
         $key = $class.'@'.$method.'.'.$key;
 
-        if (method_exists($this->app->make('cache')->getStore(), 'tags')) {
-            return $this->app->make('cache')->tags($this->tag)->remember($key, 60, $closure);
+        if (method_exists(app()->make('cache')->getStore(), 'tags')) {
+            return app()->make('cache')->tags($this->tag)->remember($key, 60, $closure);
         }
 
         return call_user_func($closure);
@@ -122,8 +112,8 @@ abstract class Repository implements RepositoryInterface
      */
     public function flushCache()
     {
-        if (method_exists($this->app->make('cache')->getStore(), 'tags')) {
-            $this->app->make('cache')->tags($this->tag)->flush();
+        if (method_exists(app()->make('cache')->getStore(), 'tags')) {
+            app()->make('cache')->tags($this->tag)->flush();
 
             event(implode('-', $this->tag).'.entity.cache.flushed', [$this]);
         }

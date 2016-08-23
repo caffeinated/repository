@@ -1,6 +1,6 @@
 Caffeinated Repository
 ======================
-[![Laravel 5.2](https://img.shields.io/badge/Laravel-5.2-orange.svg?style=flat-square)](http://laravel.com)
+[![Laravel 5.3](https://img.shields.io/badge/Laravel-5.3-orange.svg?style=flat-square)](http://laravel.com)
 [![Source](http://img.shields.io/badge/source-caffeinated/repository-blue.svg?style=flat-square)](https://github.com/caffeinated/repository)
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://tldrlegal.com/license/mit-license)
 
@@ -13,7 +13,7 @@ Quick Installation
 Begin by installing the package through Composer.
 
 ```
-composer require caffeinated/repository=~2.0
+composer require caffeinated/repository
 ```
 
 And that's it! With your coffee in reach, start building out some awesome web applications!

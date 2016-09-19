@@ -72,16 +72,19 @@ class EloquentRepository extends Repository
         $cacheKey = $this->generateKey([$where, $columns, $with]);
 
         return $this->cacheResults(get_called_class(), __FUNCTION__, $cacheKey, function() use ($where, $columns, $with) {
+            $model = $this->model->query();
+
             foreach ($where as $attribute => $value) {
                 if (is_array($value)) {
                     list($attribute, $condition, $value) = $value;
-                    $this->model->where($attribute, $condition, $value);
+
+                    $model->where($attribute, $condition, $value);
                 } else {
-                    $this->model->where($attribute, '=', $value);
+                    $model->where($attribute, '=', $value);
                 }
             }
 
-            return $this->model->with($with)
+            return $model->with($with)
                 ->get($columns);
         });
     }

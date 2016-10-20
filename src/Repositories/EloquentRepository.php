@@ -186,9 +186,12 @@ class EloquentRepository extends Repository
     {
         $attributes = $this->castRequest($attributes);
         $instance   = $this->model->newInstance($attributes);
-        $created    = $instance->save();
 
-        event(implode('-', $this->tag).'.entity.created', [$this, $instance]);
+        event(implode('-', $this->tag).'.entity.creating', [$this, $instance, $attributes]);
+
+        $created = $instance->save();
+
+        event(implode('-', $this->tag).'.entity.created', [$this, $instance, $attributes]);
 
         return [
             $created,
@@ -209,9 +212,11 @@ class EloquentRepository extends Repository
         $instance   = $id instanceof Model ? $id : $this->find($id);
 
         if ($instance) {
+            event(implode('-', $this->tag).'.entity.updating', [$this, $instance, $attributes]);
+
             $updated = $instance->update($attributes);
 
-            event(implode('-', $this->tag).'.entity.updated', [$this, $instance]);
+            event(implode('-', $this->tag).'.entity.updated', [$this, $instance, $attributes]);
         }
 
         return [
@@ -232,6 +237,8 @@ class EloquentRepository extends Repository
         $instance = $id instanceof Model ? $id : $this->find($id);
 
         if ($instance) {
+            event(implode('-', $this->tag).'.entity.deleting', [$this, $instance]);
+
             $deleted = $instance->delete();
 
             event(implode('-', $this->tag).'.entity.deleted', [$this, $instance]);

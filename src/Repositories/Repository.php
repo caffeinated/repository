@@ -11,7 +11,7 @@ abstract class Repository implements RepositoryInterface
      *
      * @var object
      */
-    protected $model;
+    public $model;
 
     /**
      * Create a new Repository instance.

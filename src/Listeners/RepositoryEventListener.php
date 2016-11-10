@@ -9,7 +9,7 @@ class RepositoryEventListener
     /**
      * Register the listeners for the subscriber.
      *
-     * @param  Illuminate\Events\Dispatcher  $events
+     * @param Illuminate\Events\Dispatcher $events
      */
     public function subscribe($events)
     {
@@ -21,8 +21,9 @@ class RepositoryEventListener
     /**
      * Listen for the *.entity.created event.
      *
-     * @param  Repository  $repository
-     * @param  mixed  $entity
+     * @param Repository $repository
+     * @param mixed      $entity
+     *
      * @return void
      */
     public function entityCreated(Repository $repository, $entity)
@@ -33,8 +34,9 @@ class RepositoryEventListener
     /**
      * Listen for the *.entity.updated event.
      *
-     * @param  Repository  $repository
-     * @param  mixed  $entity
+     * @param Repository $repository
+     * @param mixed      $entity
+     *
      * @return void
      */
     public function entityUpdated(Repository $repository, $entity)
@@ -45,8 +47,9 @@ class RepositoryEventListener
     /**
      * Listen for the *.entity.deleted event.
      *
-     * @param  Repository  $repository
-     * @param  mixed  $entity
+     * @param Repository $repository
+     * @param mixed      $entity
+     *
      * @return void
      */
     public function entityDeleted(Repository $repository, $entity)

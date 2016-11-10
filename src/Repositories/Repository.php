@@ -16,7 +16,7 @@ abstract class Repository implements RepositoryInterface
     /**
      * Create a new Repository instance.
      *
-     * @param  App  $app
+     * @param App $app
      */
     public function __construct()
     {
@@ -26,7 +26,7 @@ abstract class Repository implements RepositoryInterface
     /**
      * Set the relationships that should be eager loaded.
      *
-     * @param  mixed  $relationships
+     * @param mixed $relationships
      */
     public function with($relationships)
     {
@@ -38,8 +38,8 @@ abstract class Repository implements RepositoryInterface
     /**
      * Add an "order by" clause to the repository instance.
      *
-     * @param  string  $column
-     * @param  string  $direction
+     * @param string $column
+     * @param string $direction
      */
     public function orderBy($column, $direction = 'asc')
     {
@@ -51,8 +51,8 @@ abstract class Repository implements RepositoryInterface
     /**
      * Magic callStatic method to forward static methods to the model.
      *
-     * @param  string  $method
-     * @param  array  $parameters
+     * @param string $method
+     * @param array  $parameters
      */
     public static function __callStatic($method, $parameters)
     {
@@ -62,8 +62,8 @@ abstract class Repository implements RepositoryInterface
     /**
      * Magic call method to forward methods to the model.
      *
-     * @param  string  $method
-     * @param  array  $parameters
+     * @param string $method
+     * @param array  $parameters
      */
     public function __call($method, $parameters)
     {
@@ -75,7 +75,8 @@ abstract class Repository implements RepositoryInterface
     /**
      * Generate an unique key for caching results.
      *
-     * @param  array  $data
+     * @param array $data
+     *
      * @return string
      */
     protected function generateKey(array $data = [])
@@ -88,10 +89,11 @@ abstract class Repository implements RepositoryInterface
     /**
      * Execute the provided callback and cache the results.
      *
-     * @param  string  $class
-     * @param  string  $method
-     * @param  string  $key
-     * @param  Closure  $closure
+     * @param string  $class
+     * @param string  $method
+     * @param string  $key
+     * @param Closure $closure
+     *
      * @return mixed
      */
     protected function cacheResults($class, $method, $key, $closure)

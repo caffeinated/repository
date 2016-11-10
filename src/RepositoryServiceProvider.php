@@ -2,8 +2,8 @@
 
 namespace Caffeinated\Repository;
 
-use Illuminate\Support\ServiceProvider;
 use Caffeinated\Repository\Listeners\RepositoryEventListener;
+use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
 {

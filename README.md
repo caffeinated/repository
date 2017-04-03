@@ -37,7 +37,7 @@ class Book extends Model
 ### Create a Repository
 Create a new Repository class - usually these classes are simply stored within a `Repositories` directory. There are a few requirements for each repository instance:
 
-- Repository classes must extend the Caffeinated Repository class.
+- Repository classes must extend the Caffeinated EloquentRepository class.
 - Repository classes must specify a public property pointing to the model.
 - Repository classes must specify an array of cache tags. These tags are used by the package to handle automatic cache busting when relevent values change within the database.
 
@@ -47,9 +47,9 @@ Create a new Repository class - usually these classes are simply stored within a
 namespace App\Repositories;
 
 use App\Models\Book;
-use Caffeinated\Repositories\Repository;
+use Caffeinated\Repository\Repositories\EloquentRepository;
 
-class BookRepository extends Repository
+class BookRepository extends EloquentRepository
 {
     /**
      * @var Model

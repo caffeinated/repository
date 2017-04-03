@@ -41,6 +41,16 @@ interface Repository
     public function findWhere($where, $columns = ['*'], $with = []);
 
     /**
+     * Find all entities matching whereBetween conditions.
+     *
+     * @param  string  $attribute
+     * @param  array  $values
+     * @param  array  $columns
+     * @param  array  $with
+     */
+    public function findWhereBetween($attribute, $values, $columns = ['*'], $with = []);
+
+    /**
      * Find all entities matching whereIn conditions.
      *
      * @param string $attribute

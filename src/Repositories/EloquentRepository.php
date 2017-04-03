@@ -68,7 +68,7 @@ class EloquentRepository extends Repository
      */
     public function findWhere($where, $columns = ['*'], $with = [])
     {
-        $where = $this->castRequest($where);
+        $where    = $this->castRequest($where);
         $cacheKey = $this->generateKey([$where, $columns, $with]);
 
         return $this->cacheResults(get_called_class(), __FUNCTION__, $cacheKey, function () use ($where, $columns, $with) {
@@ -90,6 +90,26 @@ class EloquentRepository extends Repository
     }
 
     /**
+     * Find all entities matching whereBetween conditions.
+     *
+     * @param  string  $attribute
+     * @param  array  $values
+     * @param  array  $columns
+     * @param  array  $with
+     */
+    public function findWhereBetween($attribute, $values, $columns = ['*'], $with = [])
+    {
+        $values   = $this->castRequest($values);
+        $cacheKey = $this->generateKey([$attribute, $values, $columns, $with]);
+
+        return $this->cacheResults(get_called_class(), __FUNCTION__, $cacheKey, function () use ($attribute, $values, $columns, $with) {
+            return $this->model->with($with)
+                ->whereBetween($attribute, $values)
+                ->get($columns);
+        });
+    }
+
+    /**
      * Find all entities matching whereIn conditions.
      *
      * @param string $attribute
@@ -99,7 +119,7 @@ class EloquentRepository extends Repository
      */
     public function findWhereIn($attribute, $values, $columns = ['*'], $with = [])
     {
-        $values = $this->castRequest($values);
+        $values   = $this->castRequest($values);
         $cacheKey = $this->generateKey([$attribute, $values, $columns, $with]);
 
         return $this->cacheResults(get_called_class(), __FUNCTION__, $cacheKey, function () use ($attribute, $values, $columns, $with) {
@@ -119,7 +139,7 @@ class EloquentRepository extends Repository
      */
     public function findWhereNotIn($attribute, $values, $columns = ['*'], $with = [])
     {
-        $values = $this->castRequest($values);
+        $values   = $this->castRequest($values);
         $cacheKey = $this->generateKey([$attribute, $values, $columns, $with]);
 
         return $this->cacheResults(get_called_class(), __FUNCTION__, $cacheKey, function () use ($attribute, $values, $columns, $with) {
@@ -185,7 +205,7 @@ class EloquentRepository extends Repository
     public function create($attributes)
     {
         $attributes = $this->castRequest($attributes);
-        $instance = $this->model->newInstance($attributes);
+        $instance   = $this->model->newInstance($attributes);
 
         event(implode('-', $this->tag).'.entity.creating', [$this, $instance, $attributes]);
 
@@ -208,8 +228,8 @@ class EloquentRepository extends Repository
     public function update($id, $attributes)
     {
         $attributes = $this->castRequest($attributes);
-        $updated = false;
-        $instance = $id instanceof Model ? $id : $this->find($id);
+        $updated    = false;
+        $instance   = $id instanceof Model ? $id : $this->find($id);
 
         if ($instance) {
             event(implode('-', $this->tag).'.entity.updating', [$this, $instance, $attributes]);
@@ -234,7 +254,7 @@ class EloquentRepository extends Repository
      */
     public function delete($id)
     {
-        $deleted = false;
+        $deleted  = false;
         $instance = $id instanceof Model ? $id : $this->find($id);
 
         if ($instance) {

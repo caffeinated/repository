@@ -32,6 +32,15 @@ interface Repository
     public function findAll($columns = ['*'], $with = []);
 
     /**
+     * Find an entity by its primary key or fail if it doesn't exist.
+     *
+     * @param int   $id
+     * @param array $columns
+     * @param array $with
+     */
+    public function findOrFail($id, $columns = ['*'], $with = []);
+
+    /**
      * Find all entities matching where conditions.
      *
      * @param array $where

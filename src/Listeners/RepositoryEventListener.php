@@ -26,8 +26,10 @@ class RepositoryEventListener
      *
      * @return void
      */
-    public function entityCreated(Repository $repository, $entity)
+    public function entityCreated($event, $data)
     {
+        $repository = $data[0];
+
         $repository->flushCache();
     }
 
@@ -39,8 +41,10 @@ class RepositoryEventListener
      *
      * @return void
      */
-    public function entityUpdated(Repository $repository, $entity)
+    public function entityUpdated($event, $data)
     {
+        $repository = $data[0];
+
         $repository->flushCache();
     }
 
@@ -52,8 +56,10 @@ class RepositoryEventListener
      *
      * @return void
      */
-    public function entityDeleted(Repository $repository, $entity)
+    public function entityDeleted($event, $data)
     {
+        $repository = $data[0];
+
         $repository->flushCache();
     }
 }

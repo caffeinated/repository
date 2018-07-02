@@ -60,6 +60,23 @@ class EloquentRepository extends Repository
     }
 
     /**
+     * Find an entity by its primary key or fail if it doesn't exist.
+     *
+     * @param int   $id
+     * @param array $columns
+     * @param array $with
+     */
+    public function findOrFail($id, $columns = ['*'], $with = [])
+    {
+        $cacheKey = $this->generateKey([$id, $columns, $with]);
+
+        return $this->cacheResults(get_called_class(), __FUNCTION__, $cacheKey, function () use ($id, $columns, $with) {
+            return $this->model->with($with)
+                ->findOrFail($id, $columns);
+        });
+    }
+
+    /**
      * Find all entities matching where conditions.
      *
      * @param mixed $where
